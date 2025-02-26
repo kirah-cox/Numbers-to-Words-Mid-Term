@@ -1,5 +1,5 @@
 ﻿using MyTools;
-
+using MyEnums;
 
 class Program
 {
@@ -19,7 +19,6 @@ class Program
             { '9',  "nine" },
 
         };
-
         Dictionary<string, string> doubleNumberDictionary = new Dictionary<string, string>()
         {
             { "10",  "ten" },
@@ -42,8 +41,6 @@ class Program
             { "9",  "ninety" },
         };
 
-
-
         Console.WriteLine("Hello, welcome to the bank! Select an option:");
 
         while (!Tools.ExitSystem)
@@ -52,10 +49,10 @@ class Program
             bool correctResponse = false;
             while (!correctResponse)
             {
-                Console.WriteLine("1: View Account");
-                Console.WriteLine("2: Deposit into Account");
-                Console.WriteLine("3: Withdraw from Account");
-                Console.WriteLine("4: Exit");
+                Console.WriteLine($"1: {MainMenu.View} Account");
+                Console.WriteLine($"2: {MainMenu.Deposit} into Account");
+                Console.WriteLine($"3: {MainMenu.Withdraw} from Account");
+                Console.WriteLine($"4: {MainMenu.Exit}");
 
                 if (!int.TryParse(Console.ReadLine().Trim(), out optionResponse))
                 {
@@ -66,39 +63,38 @@ class Program
                     correctResponse = true;
                 }
             }
-            
 
             bool passedCheck = false;
 
-            switch (optionResponse)
+            switch ((MainMenu)optionResponse)
             {
-                case 1:
+                case MainMenu.View:
                     Tools.AccountToWords(singleNumberDictionary, doubleNumberDictionary);
                     break;
 
-                case 2:
+                case MainMenu.Deposit:
                     Console.WriteLine("How much would you like to deposit?");
-                    passedCheck = Tools.CheckAndConvertResponse();
+                    passedCheck = Tools.CheckAndConvertResponseToDecimal();
                     if (!passedCheck)
                     {
                         break;
                     }
                     Tools.ResponseToWords(singleNumberDictionary, doubleNumberDictionary);
-                    Tools.Deposit(Tools.TrueAmountResponse);
+                    Tools.Deposit(Tools.DecimalAmountResponse);
                     break;
 
-                case 3:
+                case MainMenu.Withdraw:
                     Console.WriteLine("How much would you like to withdraw?");
-                    passedCheck = Tools.CheckAndConvertResponse();
+                    passedCheck = Tools.CheckAndConvertResponseToDecimal();
                     if (!passedCheck)
                     {
                         break;
                     }
                     Tools.ResponseToWords(singleNumberDictionary, doubleNumberDictionary);
-                    Tools.Withdraw(Tools.TrueAmountResponse);
+                    Tools.Withdraw(Tools.DecimalAmountResponse);
                     break;
 
-                case 4:
+                case MainMenu.Exit:
                     Console.WriteLine("Thank you for using the bank! Exiting the system.");
                     Tools.ExitSystem = true;
                     break;
@@ -107,7 +103,6 @@ class Program
                     Console.WriteLine("Please select a valid number option.");
                     break;
             }
-        
         }
     }
 }

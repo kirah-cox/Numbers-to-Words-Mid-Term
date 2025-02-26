@@ -3,20 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MyEnums;
 
 namespace MyTools
 {
     public class Tools
     {
         public static decimal AmountInAccount { get; set; } = 0.00m;
-        public static decimal TrueAmountResponse { get; set; } = 0;
+        public static decimal DecimalAmountResponse { get; set; } = 0;
         public static string AmountResponse { get; set; } = "";
         public static string NumbersAsWords { get; set; } = "";
-        public static bool OneDollar { get; set; } = false;
-        public static int LineNumber { get; set; } = 0;
+        public static bool HaveOnlyOneDollar { get; set; } = false;
+        public static int ForeachLineNumber { get; set; } = 0;
         public static bool ExitSystem { get; set; } = false;
 
-        public static bool CheckAndConvertResponse()
+        public static bool CheckAndConvertResponseToDecimal()
         {
             AmountResponse = Console.ReadLine();
             char[] charAmountResponse = AmountResponse.ToCharArray();
@@ -62,7 +63,7 @@ namespace MyTools
                 return false;
             }
 
-            TrueAmountResponse = convertedAmountResponse;
+            DecimalAmountResponse = convertedAmountResponse;
             return true;
         }
 
@@ -79,7 +80,7 @@ namespace MyTools
 
             Console.WriteLine($"You have deposited {NumbersAsWords}.");
 
-            TrueAmountResponse = 0;
+            DecimalAmountResponse = 0;
         }
 
         public static void Withdraw(decimal amount)
@@ -94,14 +95,14 @@ namespace MyTools
 
             Console.WriteLine($"You have withdrawn {NumbersAsWords}.");
 
-            TrueAmountResponse = 0;
+            DecimalAmountResponse = 0;
         }
 
         public static void AccountToWords(Dictionary<char, string> singleNumberDictionary, Dictionary<string, string> doubleNumberDictionary)
         {
             NumbersAsWords = "";
-            LineNumber = 0;
-            OneDollar = false;
+            ForeachLineNumber = 0;
+            HaveOnlyOneDollar = false;
 
             int amountInAccountLength = AmountInAccount.ToString().Length;
             string localAmountInAccount = AmountInAccount.ToString();
@@ -113,7 +114,7 @@ namespace MyTools
             {
                 MainConvert(amount, singleNumberDictionary, doubleNumberDictionary, amountInAccountLength, localAmountInAccount);
 
-                LineNumber++;
+                ForeachLineNumber++;
             }
 
             NumbersAsWords = NumbersAsWords.Trim();
@@ -124,11 +125,11 @@ namespace MyTools
         public static void ResponseToWords(Dictionary<char, string> singleNumberDictionary, Dictionary<string, string> doubleNumberDictionary)
         {
             NumbersAsWords = "";
-            LineNumber = 0;
-            OneDollar = false;
+            ForeachLineNumber = 0;
+            HaveOnlyOneDollar = false;
 
-            int trueAmountAccountLength = TrueAmountResponse.ToString().Length;
-            string localTrueAmountResponse = TrueAmountResponse.ToString();
+            int trueAmountAccountLength = DecimalAmountResponse.ToString().Length;
+            string localTrueAmountResponse = DecimalAmountResponse.ToString();
 
             string[] amountInResponse = AmountResponse.Split(',');
 
@@ -136,7 +137,7 @@ namespace MyTools
             {
                 MainConvert(amount, singleNumberDictionary, doubleNumberDictionary, trueAmountAccountLength, localTrueAmountResponse);
 
-                LineNumber++;
+                ForeachLineNumber++;
             }
 
             NumbersAsWords = NumbersAsWords.Trim();
@@ -273,10 +274,7 @@ namespace MyTools
                 NumbersAsWords += $" {singleNumberDictionary[amount[0]]}";
             }
 
-            if (amount[0] == '1' && numberLength == 4)
-            {
-                OneDollar = true;
-            }
+            HaveOnlyOneDollar = (amount[0] == '1' && numberLength == 4) ? true : false;
 
             ConvertLargeNumbers(numberLength, localTrueAndAccount);
         }
@@ -286,15 +284,15 @@ namespace MyTools
 
             string doubleAmount = $"{twoCharAmount[0]}{twoCharAmount[1]}";
 
-            if (!OneDollar && doubleAmount == "00")
+            if (!HaveOnlyOneDollar && doubleAmount == "00")
             {
                 NumbersAsWords += " dollars and zero cents";
             }
-            else if (OneDollar && doubleAmount == "00")
+            else if (HaveOnlyOneDollar && doubleAmount == "00")
             {
                 NumbersAsWords += " dollar and zero cents";
             }
-            else if (OneDollar && doubleAmount != "01")
+            else if (HaveOnlyOneDollar && doubleAmount != "01")
             {
                 if (doubleNumberDictionary.ContainsKey(twoCharAmount[0].ToString()) && twoCharAmount[1] != '0')
                 {
@@ -313,11 +311,11 @@ namespace MyTools
                     NumbersAsWords += $" dollar and {doubleNumberDictionary[doubleAmount]} cents";
                 }
             }
-            else if (OneDollar && doubleAmount == "01")
+            else if (HaveOnlyOneDollar && doubleAmount == "01")
             {
                 NumbersAsWords += $" dollar and one cent";
             }
-            else if (!OneDollar && doubleAmount == "01")
+            else if (!HaveOnlyOneDollar && doubleAmount == "01")
             {
                 NumbersAsWords += $" dollars and one cent";
             }
@@ -349,43 +347,43 @@ namespace MyTools
 
             if (decimal.Parse(removedCharLocalTrueAndAccount) == 0.00m)
             {
-                if ((numberLength == 15 || numberLength == 14 || numberLength == 13) && LineNumber == 0)
+                if ((numberLength == 15 || numberLength == 14 || numberLength == 13) && ForeachLineNumber == 0)
                 {
                     NumbersAsWords += " billion";
                 }
-                else if (((numberLength == 12 || numberLength == 11 || numberLength == 10) && LineNumber == 0) || ((numberLength == 15 || numberLength == 14 || numberLength == 13) && LineNumber == 1))
+                else if (((numberLength == 12 || numberLength == 11 || numberLength == 10) && ForeachLineNumber == 0) || ((numberLength == 15 || numberLength == 14 || numberLength == 13) && ForeachLineNumber == 1))
                 {
                     NumbersAsWords += " million";
                 }
-                else if (((numberLength == 9 || numberLength == 8 || numberLength == 7) && LineNumber == 0) || ((numberLength == 12 || numberLength == 11 || numberLength == 10) && LineNumber == 1) || ((numberLength == 15 || numberLength == 14 || numberLength == 13) && LineNumber == 2))
+                else if (((numberLength == 9 || numberLength == 8 || numberLength == 7) && ForeachLineNumber == 0) || ((numberLength == 12 || numberLength == 11 || numberLength == 10) && ForeachLineNumber == 1) || ((numberLength == 15 || numberLength == 14 || numberLength == 13) && ForeachLineNumber == 2))
                 {
                     NumbersAsWords += " thousand";
                 }
             }
             else if (decimal.Parse(removedCharLocalTrueAndAccount) < 99.99m)
             {
-                if ((numberLength == 15 || numberLength == 14 || numberLength == 13) && LineNumber == 0)
+                if ((numberLength == 15 || numberLength == 14 || numberLength == 13) && ForeachLineNumber == 0)
                 {
                     NumbersAsWords += " billion and";
                 }
-                else if (((numberLength == 12 || numberLength == 11 || numberLength == 10) && LineNumber == 0) || ((numberLength == 15 || numberLength == 14 || numberLength == 13) && LineNumber == 1))
+                else if (((numberLength == 12 || numberLength == 11 || numberLength == 10) && ForeachLineNumber == 0) || ((numberLength == 15 || numberLength == 14 || numberLength == 13) && ForeachLineNumber == 1))
                 {
                     NumbersAsWords += " million and";
                 }
-                else if (((numberLength == 9 || numberLength == 8 || numberLength == 7) && LineNumber == 0) || ((numberLength == 12 || numberLength == 11 || numberLength == 10) && LineNumber == 1) || ((numberLength == 15 || numberLength == 14 || numberLength == 13) && LineNumber == 2))
+                else if (((numberLength == 9 || numberLength == 8 || numberLength == 7) && ForeachLineNumber == 0) || ((numberLength == 12 || numberLength == 11 || numberLength == 10) && ForeachLineNumber == 1) || ((numberLength == 15 || numberLength == 14 || numberLength == 13) && ForeachLineNumber == 2))
                 {
                     NumbersAsWords += " thousand and";
                 }
             }
-            else if ((numberLength == 15 || numberLength == 14 || numberLength == 13) && LineNumber == 0)
+            else if ((numberLength == 15 || numberLength == 14 || numberLength == 13) && ForeachLineNumber == 0)
             {
                 NumbersAsWords += " billion,";
             }
-            else if (((numberLength == 12 || numberLength == 11 || numberLength == 10) && LineNumber == 0) || ((numberLength == 15 || numberLength == 14 || numberLength == 13) && LineNumber == 1))
+            else if (((numberLength == 12 || numberLength == 11 || numberLength == 10) && ForeachLineNumber == 0) || ((numberLength == 15 || numberLength == 14 || numberLength == 13) && ForeachLineNumber == 1))
             {
                 NumbersAsWords += " million,";
             }
-            else if (((numberLength == 9 || numberLength == 8 || numberLength == 7) && LineNumber == 0) || ((numberLength == 12 || numberLength == 11 || numberLength == 10) && LineNumber == 1) || ((numberLength == 15 || numberLength == 14 || numberLength == 13) && LineNumber == 2))
+            else if (((numberLength == 9 || numberLength == 8 || numberLength == 7) && ForeachLineNumber == 0) || ((numberLength == 12 || numberLength == 11 || numberLength == 10) && ForeachLineNumber == 1) || ((numberLength == 15 || numberLength == 14 || numberLength == 13) && ForeachLineNumber == 2))
             {
                 NumbersAsWords += " thousand,";
             }
